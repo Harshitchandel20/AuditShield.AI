@@ -1,1 +1,49 @@
-# AuditShield.AI
+# AuditShield AI
+
+**Production-grade, scalable AI system for enterprise compliance and audit validation.**
+
+AuditShield AI is built for Auditors, Compliance Officers, and Enterprise Clients to perform rigorous analysis of compliance evidence using Retrieval-Augmented Generation (RAG).
+
+## 🛡️ The Problem
+Enterprise audits suffer from manual overhead, hallucination risks in standard AI, and a lack of source traceability.
+
+## 🚀 The Solution: AuditShield AI
+AuditShield AI ensures every answer is backed by verifiable evidence through a grounded architecture.
+
+### 💎 Key Guarantees
+- **Zero Hallucination Policy:** Strictly answers based only on retrieved context.
+- **Risk-Aware Responses:** Explicitly flags missing evidence with "Risk Level: HIGH".
+- **Source Transparency:** Accurate citations with page numbers.
+- **Enterprise Ready:** Clean architecture and typed schemas.
+
+## 🏗️ High-Level Architecture
+
+```mermaid
+graph TD
+    User([User/Auditor]) --> Frontend[Next.js App Router]
+    Frontend --> API[FastAPI Backend]
+    
+    subgraph "Ingestion Pipeline"
+        PDF[PDF Documents] --> Parse[PDF Parser]
+        Parse --> Chunk[Overlap Chunking]
+        Chunk --> Embed[Embedding Generation]
+        Embed --> VectorStore[(MongoDB Atlas Vector Search)]
+    end
+    
+    subgraph "RAG Engine"
+        API --> QueryEmbed[Query Embedding]
+        QueryEmbed --> Search[Vector Search]
+        Search --> Context[Context Retrieval]
+        Context --> Guardrails[Safety Guardrails]
+        Guardrails --> LLM[LLM Generation]
+        LLM --> CitedAnswer[Cited Answer + Risk Score]
+    end
+    
+    CitedAnswer --> Frontend
+```
+
+## 🛠️ Technology Stack
+- **Backend:** Python + FastAPI
+- **Frontend:** Next.js (App Router) + Tailwind CSS
+- **Database:** MongoDB Atlas (Vector Search)
+- **AI/ML:** Google Gemini API (Embeddings & LLM), Pydantic for schema validation
