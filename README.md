@@ -58,13 +58,9 @@ graph TD
 5. **Configure Environment:** Copy `.env.example` to `.env` and fill in your keys.
 6. **Run the server:** `uvicorn main:app --reload`
 
-
-## 🛠️ Getting Started
-
-### Backend Setup
-1. **Navigate to backend:** `cd backend`
-2. **Setup virtual environment:** `python -m venv venv`
-3. **Activate venv:** `venv\Scripts\activate` (Windows) or `source venv/bin/activate` (Mac/Linux)
-4. **Install dependencies:** `pip install -r requirements.txt`
-5. **Configure Environment:** Copy `.env.example` to `.env` and fill in your keys.
-6. **Run the server:** `uvicorn main:app --reload`
+## 🔄 Ingestion Flow
+1. **Upload:** `POST /api/v1/ingest` with a PDF file.
+2. **Parse:** System extracts text per page using `pypdf`.
+3. **Chunk:** Text is split into 1000-char chunks with 200-char overlap.
+4. **Embed:** Each chunk is converted into a 768-dim vector using Gemini `text-embedding-004`.
+5. **Store:** Chunks are saved in MongoDB Atlas with metadata (filename, page numbers).
