@@ -47,3 +47,13 @@ graph TD
 - **Frontend:** Next.js (App Router) + Tailwind CSS
 - **Database:** MongoDB Atlas (Vector Search)
 - **AI/ML:** Google Gemini API (Embeddings & LLM), Pydantic for schema validation
+
+## 🛠️ Getting Started
+
+### Backend Setup
+1. **Navigate to backend:** `cd backend`
+2. **Setup virtual environment:** `python -m venv venv`
+3. **Activate venv:** `venv\Scripts\activate` (Windows) or `source venv/bin/activate` (Mac/Linux)
+4. **Install dependencies:** `pip install -r requirements.txt`
+5. **Configure Environment:** Copy `.env.example` to `.env` and fill in your keys.
+6. **Run the server:** `uvicorn main:app --reload`
