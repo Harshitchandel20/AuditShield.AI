@@ -1,12 +1,21 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
+from database.mongodb import db
 
 app = FastAPI(
     title="AuditShield AI API",
     description="Backend API for AuditShield AI compliance validation",
     version="0.1.0"
 )
+
+@app.on_event("startup")
+async def startup_db_client():
+    await db.connect_to_storage()
+
+@app.on_event("shutdown")
+async def shutdown_db_client():
+    await db.close_storage()
 
 app.add_middleware(
     CORSMiddleware,
