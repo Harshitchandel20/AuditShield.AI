@@ -64,3 +64,8 @@ graph TD
 3. **Chunk:** Text is split into 1000-char chunks with 200-char overlap.
 4. **Embed:** Each chunk is converted into a 768-dim vector using Gemini `text-embedding-004`.
 5. **Store:** Chunks are saved in MongoDB Atlas with metadata (filename, page numbers).
+
+## 🔍 Retrieval Strategy
+1. **Semantic Query:** `POST /api/v1/search` with a natural language query.
+2. **Vector Lookup:** System performs a k-NN search across the vector index using Cosine Similarity.
+3. **Top-K Results:** Returns the most relevant document chunks with their similarity scores and page metadata.

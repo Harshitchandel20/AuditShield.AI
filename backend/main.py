@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from database.mongodb import db
+from api.v1.ingestion import router as ingestion_router
+from api.v1.search import router as search_router
 
 app = FastAPI(
     title="AuditShield AI API",
@@ -17,8 +19,6 @@ async def startup_db_client():
 async def shutdown_db_client():
     await db.close_storage()
 
-from api.v1.ingestion import router as ingestion_router
-
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
@@ -28,12 +28,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(ingestion_router, prefix="/api/v1")
-
+# Optional middleware for performance tracking
 @app.middleware("http")
 async def add_process_time_header(request, call_next):
     response = await call_next(request)
     return response
+
+# Register Routers
+app.include_router(ingestion_router, prefix="/api/v1")
+app.include_router(search_router, prefix="/api/v1")
 
 @app.get("/")
 async def root():
