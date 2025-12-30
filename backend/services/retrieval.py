@@ -57,13 +57,6 @@ class RetrievalService:
                 }
             }
         ]
-        
-        # ADD FILTERING if filename is provided
-        if filename:
-            # Note: MongoDB Atlas Vector Search supports pre-filtering 
-            # In a real scenario, we would add a 'filter' field to the $vectorSearch stage
-            # For now, we'll keep it simple
-            pass
 
         search_results = []
         async for doc in collection.aggregate(pipeline):

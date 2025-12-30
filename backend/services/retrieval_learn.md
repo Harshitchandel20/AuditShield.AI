@@ -9,8 +9,5 @@ In Hour 5, we implemented basic semantic retrieval. Unlike traditional keyword s
 3. **Similarity Score:** Each result is returned with a `vectorSearchScore`. In our case (Cosine Similarity), a score closer to 1.0 indicates a stronger semantic match.
 
 ## 📊 Parameters: Top-K & Candidates
-- **Top-K (limit):** The number of chunks we actually return to the user (or the LLM). We default to 5.
-- **numCandidates:** To ensure accuracy, the search engine looks at a larger initial pool (Top-K * 10) before refining the results. This balance ensures high performance without sacrificing precision.
-
-## 🛡️ Metadata Filtering (The Next Step)
-While we currently fetch the best semantic matches, the next phase (advanced RAG) will include pre-filtering by source file or risk level to provide even narrower and more accurate context.
+- **Top-K (limit):** The number of chunks we actually return. We default to 5.
+- **numCandidates:** To ensure accuracy, the search engine looks at a larger initial pool (Top-K * 10).
