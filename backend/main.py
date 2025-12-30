@@ -18,6 +18,7 @@ async def shutdown_db_client():
     await db.close_storage()
 
 from api.v1.ingestion import router as ingestion_router
+from api.v1.search import router as search_router
 
 # Configure CORS
 app.add_middleware(
@@ -29,6 +30,7 @@ app.add_middleware(
 )
 
 app.include_router(ingestion_router, prefix="/api/v1")
+app.include_router(search_router, prefix="/api/v1")
 
 @app.middleware("http")
 async def add_process_time_header(request, call_next):
