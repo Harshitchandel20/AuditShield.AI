@@ -4,6 +4,7 @@ import os
 from database.mongodb import db
 from api.v1.ingestion import router as ingestion_router
 from api.v1.search import router as search_router
+from api.v1.chat.chat_api import router as chat_router
 
 app = FastAPI(
     title="AuditShield AI API",
@@ -37,6 +38,7 @@ async def add_process_time_header(request, call_next):
 # Register Routers
 app.include_router(ingestion_router, prefix="/api/v1")
 app.include_router(search_router, prefix="/api/v1")
+app.include_router(chat_router, prefix="/api/v1")
 
 @app.get("/")
 async def root():
