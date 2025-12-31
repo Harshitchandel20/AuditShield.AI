@@ -1,21 +1,28 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Shield, FileText, Send, AlertTriangle, CheckCircle, Info, FileSearch, Search as SearchIcon } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Shield, FileText, Send, AlertTriangle, CheckCircle, Info, FileSearch, Loader2 } from 'lucide-react';
 import { UploadButton } from '@/components/UploadButton';
-import { SearchResults } from '@/components/SearchResults';
+import { ChatMessage } from '@/components/ChatMessage';
 import { DocumentViewer } from '@/components/DocumentViewer';
 import { useAuditStore } from '@/hooks/useAuditStore';
 
 export default function WorkspacePage() {
-  const { status, error, currentDoc, uploadFile, clearAudit, performSearch, searchContext, searchStatus } = useAuditStore();
-  const [searchQuery, setSearchQuery] = useState('');
+  const { status, error, currentDoc, uploadFile, clearAudit, chatHistory, chatStatus, askQuestion } = useAuditStore();
+  const [query, setQuery] = useState('');
   const [selectedChunk, setSelectedChunk] = useState<any>(null);
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
-  const handleSearch = (e: React.FormEvent) => {
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chatHistory]);
+
+  const handleAsk = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim() && currentDoc) {
-      performSearch(searchQuery);
+    if (query.trim() && currentDoc) {
+      askQuestion(query);
+      setQuery('');
     }
   };
 
@@ -87,7 +94,7 @@ export default function WorkspacePage() {
             )}
 
             {/* Ingestion results indicator if success */}
-            {currentDoc && status === 'success' && (
+            {currentDoc && status === 'success' && chatHistory.length === 0 && (
               <div className="p-3 rounded-lg bg-slate-900/50 border border-slate-800 flex items-center gap-3">
                 <div className="p-2 bg-emerald-500/10 rounded-lg">
                   <FileSearch className="w-4 h-4 text-emerald-500" />
@@ -101,32 +108,52 @@ export default function WorkspacePage() {
               </div>
             )}
 
-            {/* Search Results */}
-            {searchContext && (
-              <SearchResults 
-                searchData={searchContext} 
-                onResultClick={(result) => setSelectedChunk(result)}
+            {/* Chat Messages */}
+            {chatHistory.map((msg, idx) => (
+              <ChatMessage
+                key={idx}
+                role={msg.role}
+                content={msg.content}
+                citations={msg.ragResponse?.citations}
+                riskLevel={msg.ragResponse?.risk_level}
+                riskScore={msg.ragResponse?.risk_score}
               />
+            ))}
+
+            {/* Loading indicator */}
+            {chatStatus === 'asking' && (
+              <div className="flex gap-3">
+                <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Loader2 className="w-4 h-4 text-primary animate-spin" />
+                </div>
+                <div className="flex-1">
+                  <div className="rounded-xl p-4 bg-slate-900/50 border border-slate-800">
+                    <p className="text-sm text-slate-400">Analyzing compliance evidence...</p>
+                  </div>
+                </div>
+              </div>
             )}
+
+            <div ref={chatEndRef} />
           </div>
 
-          {/* Search Input Area */}
+          {/* Chat Input Area */}
           <footer className="p-4 border-t border-slate-800 bg-[#0f172a]/50">
-            <form onSubmit={handleSearch} className="relative">
+            <form onSubmit={handleAsk} className="relative">
               <input 
                 type="text" 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={currentDoc ? "Search compliance evidence..." : "Upload a PDF document to start..."}
-                disabled={!currentDoc || searchStatus === 'searching'}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={currentDoc ? "Ask about compliance evidence..." : "Upload a PDF document to start..."}
+                disabled={!currentDoc || chatStatus === 'asking'}
                 className="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 pl-4 pr-12 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               />
               <button 
                 type="submit"
-                disabled={!currentDoc || !searchQuery.trim() || searchStatus === 'searching'}
+                disabled={!currentDoc || !query.trim() || chatStatus === 'asking'}
                 className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-primary hover:bg-primary-dark rounded-lg transition-colors disabled:opacity-50 disabled:grayscale"
               >
-                <SearchIcon className="w-4 h-4" />
+                <Send className="w-4 h-4" />
               </button>
             </form>
           </footer>
