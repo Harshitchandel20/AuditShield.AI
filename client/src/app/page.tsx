@@ -1,12 +1,23 @@
 "use client";
 
-import React from 'react';
-import { Shield, FileText, Send, AlertTriangle, CheckCircle, Info, FileSearch } from 'lucide-react';
+import React, { useState } from 'react';
+import { Shield, FileText, Send, AlertTriangle, CheckCircle, Info, FileSearch, Search as SearchIcon } from 'lucide-react';
 import { UploadButton } from '@/components/UploadButton';
+import { SearchResults } from '@/components/SearchResults';
+import { DocumentViewer } from '@/components/DocumentViewer';
 import { useAuditStore } from '@/hooks/useAuditStore';
 
 export default function WorkspacePage() {
-  const { status, error, currentDoc, uploadFile, clearAudit } = useAuditStore();
+  const { status, error, currentDoc, uploadFile, clearAudit, performSearch, searchContext, searchStatus } = useAuditStore();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedChunk, setSelectedChunk] = useState<any>(null);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim() && currentDoc) {
+      performSearch(searchQuery);
+    }
+  };
 
   return (
     <main className="flex h-screen w-full bg-[#020617] overflow-hidden">
@@ -89,24 +100,35 @@ export default function WorkspacePage() {
                 </div>
               </div>
             )}
+
+            {/* Search Results */}
+            {searchContext && (
+              <SearchResults 
+                searchData={searchContext} 
+                onResultClick={(result) => setSelectedChunk(result)}
+              />
+            )}
           </div>
 
-          {/* Input Area */}
+          {/* Search Input Area */}
           <footer className="p-4 border-t border-slate-800 bg-[#0f172a]/50">
-            <div className="relative">
+            <form onSubmit={handleSearch} className="relative">
               <input 
                 type="text" 
-                placeholder={currentDoc ? "Ask about compliance evidence..." : "Upload a PDF document to start..."}
-                disabled={!currentDoc}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={currentDoc ? "Search compliance evidence..." : "Upload a PDF document to start..."}
+                disabled={!currentDoc || searchStatus === 'searching'}
                 className="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 pl-4 pr-12 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               />
               <button 
-                disabled={!currentDoc}
+                type="submit"
+                disabled={!currentDoc || !searchQuery.trim() || searchStatus === 'searching'}
                 className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-primary hover:bg-primary-dark rounded-lg transition-colors disabled:opacity-50 disabled:grayscale"
               >
-                <Send className="w-4 h-4" />
+                <SearchIcon className="w-4 h-4" />
               </button>
-            </div>
+            </form>
           </footer>
         </section>
 
@@ -123,12 +145,8 @@ export default function WorkspacePage() {
             </div>
           </header>
           
-          <div className="flex-1 flex items-center justify-center p-8">
-            <div className="w-full h-full max-w-4xl border-2 border-dashed border-slate-800 rounded-2xl flex flex-col items-center justify-center text-slate-500 animate-pulse bg-slate-900/20">
-              <FileText className="w-16 h-16 mb-4 opacity-20" />
-              <p className="text-sm">No document selected for viewing</p>
-              <p className="text-xs mt-2 text-slate-600 italic">Select a citation in the chat to view the source</p>
-            </div>
+          <div className="flex-1 overflow-hidden">
+            <DocumentViewer selectedChunk={selectedChunk} />
           </div>
 
           {/* Floating Risk Legend */}

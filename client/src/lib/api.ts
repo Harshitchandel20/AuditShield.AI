@@ -9,7 +9,7 @@ export interface IngestionResponse {
 
 export interface SearchResult {
     content: string;
-    score: float;
+    score: number;
     metadata: {
         filename: string;
         page_number: number;
