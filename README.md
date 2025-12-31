@@ -48,6 +48,97 @@ graph TD
 - **Database:** MongoDB Atlas (Vector Search)
 - **AI/ML:** Google Gemini API (Embeddings & LLM), Pydantic for schema validation
 
+## 🚀 Quick Start
+
+### Prerequisites
+- Python 3.10+
+- Node.js 18+
+- MongoDB Atlas account
+- Google Gemini API key
+
+### Backend Setup
+
+1. **Clone and navigate to backend:**
+```bash
+cd backend
+```
+
+2. **Install dependencies:**
+```bash
+pip install -r requirements.txt
+```
+
+3. **Create `.env` file:**
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/auditshield
+DATABASE_NAME=auditshield
+COLLECTION_NAME=compliance_chunks
+VECTOR_INDEX_NAME=vector_index
+```
+
+4. **Run the backend:**
+```bash
+uvicorn main:app --reload
+```
+
+Backend will be available at `http://localhost:8000`
+
+### Frontend Setup
+
+1. **Navigate to client:**
+```bash
+cd client
+```
+
+2. **Install dependencies:**
+```bash
+npm install
+```
+
+3. **Run the frontend:**
+```bash
+npm run dev
+```
+
+Frontend will be available at `http://localhost:3000`
+
+## 📚 API Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/` | GET | Health check |
+| `/api/v1/ingest` | POST | Upload and process PDF documents |
+| `/api/v1/search` | POST | Semantic search across documents |
+| `/api/v1/chat/ask` | POST | Ask questions with grounded responses |
+
+## 📖 Documentation
+
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Production deployment guide
+- **[learn.md](./learn.md)** - Architecture and design decisions
+- **[Walkthrough](https://github.com/yourusername/AuditShield.AI)** - Complete project walkthrough
+
+## 🎯 Usage Example
+
+1. **Upload a PDF:** Click "Ingest Document" and select a compliance PDF
+2. **Ask a question:** Type your compliance question in the chat
+3. **Review citations:** Click on sources to verify evidence
+4. **Check risk level:** Green (LOW) = strong evidence, Red (HIGH) = no evidence
+
+## 🔒 Security & Privacy
+
+- All documents are processed locally
+- No data is shared with third parties except Gemini API for processing
+- Citations ensure full audit trail
+
+## 📝 License
+
+MIT License - see LICENSE file for details
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read CONTRIBUTING.md for guidelines.
+
 ## 🛠️ Getting Started
 
 ### Backend Setup
